@@ -1,0 +1,28 @@
+---
+
+- name: create k3s directory
+  file:
+    path: /etc/rancher/k3s/ 
+    state: directory
+
+- name: create image directory
+  file:
+    path: /var/lib/rancher/k3s/agent/images/
+    state: directory
+
+- name: create k3s registies.yaml
+  copy:
+    src: /data/nfs/k3s/registries.yaml
+    dest: /etc/rancher/k3s/registries.yaml
+
+- name: extract k3s images
+  shell: gunzip -c /mnt/nfs/k3s/k3s-airgap-images-arm.tar.gz > /var/lib/rancher/k3s/agent/images/k3s-airgap-images-arm.tar
+  args:
+    creates: /var/lib/rancher/k3s/agent/images/k3s-airgap-images-arm.tar
+
+- name: copy k3s binary
+  copy:
+    src: /mnt/nfs/k3s/k3s-armhf
+    dest: /usr/local/bin/k3s
+    mode: '0755'
+    remote_src: yes

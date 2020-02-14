@@ -1,0 +1,12 @@
+---
+- hosts: all
+  roles:
+    - k3s-common
+
+#- hosts: master
+#  roles:
+#    - k3s-common
+
+#- hosts: slaves
+#  roles:
+#    - k3s-slaves

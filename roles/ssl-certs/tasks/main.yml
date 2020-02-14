@@ -1,0 +1,44 @@
+---
+- name: Install packages
+  yum: state=present name={{ item }}
+  with_items:
+    - openssl
+    - python-certbot-apache
+
+- name: Insert cert script
+  copy:
+    src: cert.sh
+    dest: /usr/local/bin/cert.sh
+    mode: 0755
+    force: yes
+
+- name: create default ssl certificate
+  shell: "/usr/local/bin/cert.sh {{ ansible_local.real_ansible_fqdn.real_ansible_fqdn }}"
+  args:
+    creates: "/etc/ssl/{{ ansible_local.real_ansible_fqdn.real_ansible_fqdn }}.pem"
+
+- name: Insert cert script for letsencrypt
+  copy:
+    src: cert-le.sh
+    dest: /usr/local/bin/cert-le.sh
+    mode: 0755
+    force: yes
+
+- name: create letsencrypt ssl certificate
+  shell: "/usr/local/bin/cert-le.sh"
+  args:
+    creates: "/etc/ssl/{{ ansible_local.real_ansible_fqdn.real_ansible_fqdn }}-le.pem"
+
+- name: Insert cert-renew script for letsencrypt
+  copy:
+    src: cert-renew.sh
+    dest: /usr/local/bin/cert-renew.sh
+    mode: 0755
+    force: yes
+
+- name: Create cronjob for certbot renew
+  cron:
+    name: "odo-certbot-renew"
+    minute: "0"
+    hour: "3"
+    job: "/usr/local/bin/cert-renew.sh > /dev/null 2>&1"
