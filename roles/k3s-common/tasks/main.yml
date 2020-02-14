@@ -1,5 +1,12 @@
 ---
 
+- name: Insert custom fact file for fqdn
+  copy:
+    src: facts/k3s_stack_id
+    dest: /etc/ansible/facts.d/k3s_stack_id.fact
+    mode: 0755
+    force: yes
+
 - name: create k3s directory
   file:
     path: /etc/rancher/k3s/ 
@@ -25,4 +32,5 @@
     src: /mnt/nfs/k3s/k3s-armhf
     dest: /usr/local/bin/k3s
     mode: '0755'
+    force: no
     remote_src: yes

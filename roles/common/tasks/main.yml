@@ -10,13 +10,6 @@
     path: "/etc/ansible/facts.d"
     state: "directory"
 
-- name: Insert custom fact file for fqdn
-  copy:
-    src: facts/k3s_stack_id
-    dest: /etc/ansible/facts.d/k3s_stack_id.fact
-    mode: 0755
-    force: yes
-
 - name: create nfs mount dir
   file:
     path: /mnt/nfs
